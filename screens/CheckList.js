@@ -75,7 +75,7 @@ const CheckList = ({ navigation }) => {
   const { colors } = useTheme();
 
   return (
-    <ScrollView style={{ flex: 1, backgroundColor: colors.background }}>
+    <View style={{ flex: 1, backgroundColor: colors.background }}>
       {/* Header */}
       <View
         style={{
@@ -126,7 +126,7 @@ const CheckList = ({ navigation }) => {
           <Tasks />
         </View>
       </BigSpacer>
-    </ScrollView>
+    </View>
   );
 };
 
