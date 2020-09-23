@@ -14,9 +14,7 @@ const Project = () => {
           backgroundColor: colors.backdrop,
           borderRadius: 20,
           padding: 30,
-          marginHorizontal: 20,
-          marginVertical: 20,
-          marginLeft: 25,
+          margin: 30,
         }}
       >
         <Spacer>

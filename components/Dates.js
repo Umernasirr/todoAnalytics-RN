@@ -1,6 +1,7 @@
 import React, { useContext, useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useTheme, Title, TouchableRipple } from "react-native-paper";
+import * as Animatable from "react-native-animatable";
 
 import { Context } from "../context/todoContext";
 
@@ -20,7 +21,8 @@ const Dates = ({ date, day }) => {
 
   return (
     <TouchableRipple onPress={() => setCurrentDate(date)}>
-      <View
+      <Animatable.View
+        animation="fadeIn"
         style={[
           styles.card,
           {
@@ -41,8 +43,16 @@ const Dates = ({ date, day }) => {
         >
           {date}
         </Text>
-        <Text style={{ fontSize: 12, textAlign: "center" }}>{day}</Text>
-      </View>
+        <Text
+          style={{
+            color: colors.background,
+            fontSize: 12,
+            textAlign: "center",
+          }}
+        >
+          {day}
+        </Text>
+      </Animatable.View>
     </TouchableRipple>
   );
 };

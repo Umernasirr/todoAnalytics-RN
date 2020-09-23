@@ -4,28 +4,17 @@ import {
   Text,
   View,
   Image,
-  FlatList,
   TouchableOpacity,
   ScrollView,
 } from "react-native";
 import * as Animatable from "react-native-animatable";
 import { useTheme, Title, Button } from "react-native-paper";
 import Spacer from "../components/Spacer";
-import BigSpacer from "../components/BigSpacer";
-import { categories } from "../constants";
 import FeaturedProjects from "../components/FeaturedProjects";
-import Tasks from "../components/Tasks";
 import { Context } from "../context/todoContext";
 import { Dimensions } from "react-native";
 
-import {
-  LineChart,
-  BarChart,
-  PieChart,
-  ProgressChart,
-  ContributionGraph,
-  StackedBarChart,
-} from "react-native-chart-kit";
+import { LineChart, ProgressChart } from "react-native-chart-kit";
 
 const Home = () => {
   const AnimationRef = useRef(null);
@@ -56,7 +45,7 @@ const Home = () => {
     if (query !== qr) {
       // resetCounts();
       setQuery(qr);
-      AnimationRef.current?.bounceIn(2000, "ease-in");
+      AnimationRef.current?.fadeInUp();
     }
   };
 
@@ -66,6 +55,7 @@ const Home = () => {
   }, []);
 
   useEffect(() => {
+    console.log(state.totalTasks);
     resetCounts();
 
     const percentages = [];
@@ -252,7 +242,7 @@ const Home = () => {
         }}
       >
         {/* Graph */}
-        <View>
+        <Animatable.View>
           <ProgressChart
             data={data}
             width={screenWidth - 20}
@@ -262,7 +252,7 @@ const Home = () => {
             chartConfig={chartConfig}
             hideLegend={false}
           />
-        </View>
+        </Animatable.View>
       </View>
 
       <Spacer>

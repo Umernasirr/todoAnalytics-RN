@@ -138,7 +138,13 @@ const getTotalTasks = (dispatch) => async () => {
   dispatch({ type: "local_total_tasks" });
 };
 
-const addTask = (dispatch) => async (desc, date, completed, category, featured) => {
+const addTask = (dispatch) => async (
+  desc,
+  date,
+  completed,
+  category,
+  featured
+) => {
   category = category.toLowerCase();
   console.log(desc, date, completed, category);
   const task = {
@@ -147,7 +153,7 @@ const addTask = (dispatch) => async (desc, date, completed, category, featured) 
     date,
     completed,
     category,
-    featured
+    // featured
   };
 
   dispatch({ type: "add_task", payload: task });

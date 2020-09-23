@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useContext, useEffect, useRef } from "react";
 import {
   FlatList,
   StyleSheet,
@@ -14,8 +14,9 @@ import { useNavigation } from "@react-navigation/native";
 import { Context } from "../context/todoContext";
 import Spacer from "./Spacer";
 import { ScrollView } from "react-native-gesture-handler";
-
+import * as Animatable from "react-native-animatable";
 const Tasks = () => {
+  let taskRef = useRef();
   const navigation = useNavigation();
   const { state, setTaskStatus, deleteTask, getSavedTasks } = useContext(
     Context
@@ -29,6 +30,10 @@ const Tasks = () => {
   const { colors } = useTheme();
 
   const RenderItem = ({ id, desc, completed }) => {
+    useEffect(() => {
+      taskRef.current.fadeIn();
+    }, []);
+
     return (
       <View
         style={{
@@ -99,7 +104,7 @@ const Tasks = () => {
 
   if (tasks.length > 0) {
     return (
-      <View>
+      <Animatable.View ref={taskRef}>
         <FlatList
           data={tasks}
           renderItem={({ item }) => (
@@ -111,7 +116,7 @@ const Tasks = () => {
           )}
           keyExtractor={(item) => item.id.toString()}
         />
-      </View>
+      </Animatable.View>
     );
   } else {
     return (

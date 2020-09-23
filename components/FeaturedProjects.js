@@ -8,29 +8,29 @@ import {
   FlatList,
 } from "react-native";
 
+import Carousel from "react-native-snap-carousel";
+
 import { useTheme, Title, Button } from "react-native-paper";
-import Spacer from "../components/Spacer";
+
 import Project from "../components/Project";
-import { ScrollView } from "react-native-gesture-handler";
 const FeaturedProjects = () => {
+  const screenWidth = Dimensions.get("window").width;
+  const screenHeight = Dimensions.get("window").height;
+
   const { colors } = useTheme();
 
   return (
     <View>
       <Title style={{ color: colors.onSurface }}>Featured Projects</Title>
 
-      <View
-        style={{
-          flexDirection: "row",
-        }}
-      >
-        <FlatList
-          pagingEnabled
-          horizontal
-          bounces
+      <View>
+        <Carousel
           data={[1, 1, 1, 1]}
-          renderItem={({ item }) => <Project />}
-          keyExtractor={(item) => item + (Math.random() * 10).toString()}
+          renderItem={({ item, index }) => <Project />}
+          sliderWidth={screenWidth - 40}
+          itemWidth={screenWidth - 50}
+          layout="stack"
+          activeAnimationType="timing"
         />
 
         {/*  */}
