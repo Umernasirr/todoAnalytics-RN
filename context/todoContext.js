@@ -7,11 +7,17 @@ const todoReducer = (state, action) => {
     case "add_tasks":
       return { ...state, tasks: action.payload };
     case "add_task":
-      return { ...state, tasks: [...state.tasks, action.payload] };
+      let newtasks = [...state.tasks, action.payload];
+
+      saveLocalTasks(newtasks);
+      return { ...state, tasks: newtasks };
 
     case "local_total_tasks":
-      state.totalTasks.map((totalTask) => {
-        let totalTasksMap = state.tasks.map((task) => {
+      console.log("is this being called");
+      console.log(state);
+
+      const newTotal = state.totalTasks.map((totalTask) => {
+        state.tasks.map((task) => {
           if (task.category === totalTask.category) {
             const completed = task.completed;
 
@@ -30,11 +36,10 @@ const todoReducer = (state, action) => {
 
             return totalTask;
           }
-
           return totalTask;
         });
 
-        console.log(totalTasksMap);
+        return { ...state, totalTasks: newTotal };
       });
 
       return { ...state };
@@ -66,17 +71,36 @@ const todoReducer = (state, action) => {
 
     case "delete_task":
       let tasks = state.tasks.filter((task) => task.id !== action.payload);
+
+      saveLocalTasks(tasks);
+
       return { ...state, tasks };
 
     case "edit_task":
       tasks = state.tasks.map((task) => {
         if (task.id === action.payload) {
           task.completed = !task.completed;
+          // Incrementing in the total Count
+          state.totalTasks.forEach((totalTask) => {
+            if (task.category === totalTask.category) {
+              if (task.completed) {
+                totalTask.pending -= 1;
+                totalTask.completed += 1;
+              } else {
+                totalTask.pending += 1;
+                totalTask.completed -= 1;
+              }
+            }
+          });
+
           return task;
         } else {
           return task;
         }
       });
+
+      saveLocalTasks(tasks);
+
       return { ...state, tasks };
 
     case "set_date":
@@ -85,6 +109,10 @@ const todoReducer = (state, action) => {
     default:
       state;
   }
+};
+
+const saveLocalTasks = async (tasks) => {
+  await AsyncStorage.setItem("tasks", JSON.stringify(tasks));
 };
 
 const getDateBucket = (date) => {
@@ -98,11 +126,11 @@ const getDateBucket = (date) => {
 };
 
 const getSavedTasks = (dispatch) => async () => {
-  let tasks = JSON.parse(await AsyncStorage.getItem("tasks"));
-  if (tasks) {
+  let localTasks = await AsyncStorage.getItem("tasks");
+
+  if (localTasks) {
+    let tasks = JSON.parse(await AsyncStorage.getItem("tasks"));
     dispatch({ type: "add_tasks", payload: tasks });
-  } else {
-    console.log("No Tasks on Local");
   }
 };
 
@@ -112,8 +140,9 @@ const getTotalTasks = (dispatch) => async () => {
 
 const addTask = (dispatch) => async (desc, date, completed, category, featured) => {
   category = category.toLowerCase();
+  console.log(desc, date, completed, category);
   const task = {
-    id: Math.round(Math.random() * 1000),
+    id: Math.round(Math.random() * 10000),
     desc,
     date,
     completed,
@@ -123,14 +152,10 @@ const addTask = (dispatch) => async (desc, date, completed, category, featured) 
 
   dispatch({ type: "add_task", payload: task });
   dispatch({ type: "add_total_tasks", payload: task });
+};
 
-  let savedTasks = [];
-  if (JSON.parse(await AsyncStorage.getItem("tasks")).length > 0) {
-    savedTasks = JSON.parse(await AsyncStorage.getItem("tasks"));
-  }
-
-  savedTasks.push(task);
-  await AsyncStorage.setItem("tasks", JSON.stringify(savedTasks));
+const resetTotalTasks = (dispatch) => async () => {
+  await AsyncStorage.removeItem("tasks");
 };
 
 const deleteTask = (dispatch) => async (id) => {
@@ -156,31 +181,7 @@ export const { Context, Provider } = createDataContext(
     getTotalTasks,
   },
   {
-    tasks: [
-      {
-        id: 1,
-        desc: "Make the Mockup of Task app",
-        completed: true,
-        date: 21,
-        category: "custom",
-      },
-
-      {
-        id: 2,
-        desc: "Make the Mockup of Task app",
-        completed: true,
-        date: 11,
-        category: "casual",
-      },
-
-      {
-        id: 3,
-        desc: "Make the Mockup of Task app",
-        completed: true,
-        date: 25,
-        category: "important",
-      },
-    ],
+    tasks: [],
     currentDate: new Date().getDate(),
     totalTasks: [
       {

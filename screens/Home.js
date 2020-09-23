@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, useRef } from "react";
 import {
   StyleSheet,
   Text,
@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   ScrollView,
 } from "react-native";
+import * as Animatable from "react-native-animatable";
 import { useTheme, Title, Button } from "react-native-paper";
 import Spacer from "../components/Spacer";
 import BigSpacer from "../components/BigSpacer";
@@ -27,38 +28,57 @@ import {
 } from "react-native-chart-kit";
 
 const Home = () => {
+  const AnimationRef = useRef(null);
+
   const {
-    state: { totalTasks },
+    state,
+    state: { totalTasks, tasks },
     getSavedTasks,
     getTotalTasks,
+    resetTotalTasks,
   } = useContext(Context);
 
   const [query, setQuery] = useState("all");
-  const [percentangeCompleted, setPercentangeCompleted] = useState([
-    0,
-    0,
-    0,
-    0,
-  ]);
+  const [percentageCompleted, setPercentageCompleted] = useState([0, 0, 0, 0]);
 
   const [totalOneToTen, setTotalOneToTen] = useState(0);
   const [totalElevenToTwenty, setTotalElevenToTwenty] = useState(0);
 
   const [totalTwentyOneOnwards, setTotalTwentyOneOnwards] = useState(0);
 
+  const resetCounts = () => {
+    setTotalOneToTen(0);
+    setTotalElevenToTwenty(0);
+    setTotalTwentyOneOnwards(0);
+  };
+
   const changeQuery = (qr) => {
     if (query !== qr) {
+      // resetCounts();
       setQuery(qr);
+      AnimationRef.current?.bounceIn(2000, "ease-in");
     }
   };
 
   useEffect(() => {
     getSavedTasks();
     getTotalTasks();
+  }, []);
 
-    setPercentangeCompleted(
-      totalTasks.map((task) => task.completed / task.total)
-    );
+  useEffect(() => {
+    resetCounts();
+
+    const percentages = [];
+
+    totalTasks.filter((totalTask) => {
+      if (totalTask.completed === 0 || totalTask.total === 0) {
+        percentages.push(0);
+      } else {
+        percentages.push(totalTask.completed / totalTask.total);
+      }
+    });
+
+    setPercentageCompleted(percentages);
 
     // Totals
 
@@ -86,14 +106,14 @@ const Home = () => {
     setTotalOneToTen(testA);
     setTotalElevenToTwenty(testB);
     setTotalTwentyOneOnwards(testC);
-  }, [totalTasks, query]);
+  }, [state, query]);
 
   const screenWidth = Dimensions.get("window").width;
   const screenHeight = Dimensions.get("window").height;
   const data = {
-    labels: ["Important", "Casual", "Custom"],
+    labels: ["Important", "Custom", "Casual"],
 
-    data: percentangeCompleted,
+    data: percentageCompleted,
   };
 
   const chartConfig = {
@@ -182,7 +202,13 @@ const Home = () => {
 
   //
   return (
-    <ScrollView style={{ flex: 1, backgroundColor: colors.background }}>
+    <ScrollView
+      style={{
+        height: screenHeight,
+        flex: 1,
+        backgroundColor: colors.background,
+      }}
+    >
       {/* Header */}
       <View
         style={{
@@ -260,38 +286,39 @@ const Home = () => {
           </Button>
         </View>
       </Spacer>
+      <Animatable.View ref={AnimationRef}>
+        <LineChart
+          data={{
+            labels: ["", "1-10", "11-20", "21-31"],
+            datasets: [
+              {
+                data: [
+                  0,
+                  totalOneToTen,
+                  totalElevenToTwenty,
+                  totalTwentyOneOnwards,
+                ],
+              },
+            ],
+          }}
+          yAxisInterval={2} // optional, defaults to 1
+          width={Dimensions.get("window").width} // from react-native
+          height={200}
+          chartConfig={{
+            backgroundGradientFrom: colors.purple,
+            backgroundGradientTo: colors.primary,
 
-      <LineChart
-        data={{
-          labels: ["", "1-10", "11-20", "21-31"],
-          datasets: [
-            {
-              data: [
-                0,
-                totalOneToTen,
-                totalElevenToTwenty,
-                totalTwentyOneOnwards,
-              ],
+            backgroundGradientFromOpacity: 0.2,
+            backgroundGradientToOpacity: 0.1,
+
+            decimalPlaces: 0, // optional, defaults to 2dp
+            color: (opacity = 1) => `rgba(255,255, 255, ${opacity})`,
+            style: {
+              borderRadius: 16,
             },
-          ],
-        }}
-        yAxisInterval={1} // optional, defaults to 1
-        width={Dimensions.get("window").width} // from react-native
-        height={200}
-        chartConfig={{
-          backgroundGradientFrom: colors.purple,
-          backgroundGradientTo: colors.primary,
-
-          backgroundGradientFromOpacity: 0.2,
-          backgroundGradientToOpacity: 0.1,
-
-          decimalPlaces: 0, // optional, defaults to 2dp
-          color: (opacity = 1) => `rgba(255,255, 255, ${opacity})`,
-          style: {
-            borderRadius: 16,
-          },
-        }}
-      />
+          }}
+        />
+      </Animatable.View>
 
       {/* Tasks */}
     </ScrollView>

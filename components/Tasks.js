@@ -99,7 +99,7 @@ const Tasks = () => {
 
   if (tasks.length > 0) {
     return (
-      <ScrollView>
+      <View>
         <FlatList
           data={tasks}
           renderItem={({ item }) => (
@@ -111,7 +111,7 @@ const Tasks = () => {
           )}
           keyExtractor={(item) => item.id.toString()}
         />
-      </ScrollView>
+      </View>
     );
   } else {
     return (
