@@ -31,6 +31,7 @@ const FeaturedProjects = () => {
           itemWidth={screenWidth - 50}
           layout="stack"
           activeAnimationType="timing"
+          activeSlideAlignment="center"
         />
 
         {/*  */}

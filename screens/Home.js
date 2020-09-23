@@ -96,7 +96,7 @@ const Home = () => {
     setTotalOneToTen(testA);
     setTotalElevenToTwenty(testB);
     setTotalTwentyOneOnwards(testC);
-  }, [state, query]);
+  }, [tasks, totalTasks, query]);
 
   const screenWidth = Dimensions.get("window").width;
   const screenHeight = Dimensions.get("window").height;
