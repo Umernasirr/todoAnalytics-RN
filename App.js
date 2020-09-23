@@ -1,15 +1,17 @@
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
-import { DarkTheme, Provider as PaperProvider } from "react-native-paper";
+import { DarkTheme, DefaultTheme, Provider as PaperProvider } from "react-native-paper";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
 import { Provider } from "./context/todoContext";
 
+
 import Home from "./screens/Home";
 import CheckList from "./screens/CheckList";
 import AddTask from "./screens/AddTask";
+
 const theme = {
   ...DarkTheme,
   colors: {
@@ -23,11 +25,7 @@ const theme = {
   roundness: 20,
 };
 
-const data = {
-  labels: ["Swim", "Bike", "Run"],
 
-  data: [0.4, 0.6, 0.8],
-};
 
 function App() {
   const TaskStack = createStackNavigator();

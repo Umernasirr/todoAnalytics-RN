@@ -110,7 +110,7 @@ const getTotalTasks = (dispatch) => async () => {
   dispatch({ type: "local_total_tasks" });
 };
 
-const addTask = (dispatch) => async (desc, date, completed, category) => {
+const addTask = (dispatch) => async (desc, date, completed, category, featured) => {
   category = category.toLowerCase();
   const task = {
     id: Math.round(Math.random() * 1000),
@@ -118,6 +118,7 @@ const addTask = (dispatch) => async (desc, date, completed, category) => {
     date,
     completed,
     category,
+    featured
   };
 
   dispatch({ type: "add_task", payload: task });

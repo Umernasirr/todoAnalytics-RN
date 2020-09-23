@@ -10,7 +10,7 @@ import {
 } from "react-native";
 
 import { Ionicons } from "@expo/vector-icons";
-import { useTheme, Title, Button, TouchableRipple } from "react-native-paper";
+import { useTheme, Title } from "react-native-paper";
 import Spacer from "../components/Spacer";
 import BigSpacer from "../components/BigSpacer";
 import Dates from "../components/Dates";

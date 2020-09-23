@@ -10,6 +10,9 @@ import {
   TouchableRipple,
 } from "react-native-paper";
 
+
+
+import { Checkbox } from 'react-native-paper';
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { Ionicons } from "@expo/vector-icons";
 import { Fontisto } from "@expo/vector-icons";
@@ -18,12 +21,10 @@ import BigSpacer from "../components/BigSpacer";
 import Spacer from "../components/Spacer";
 import { FontAwesome } from "@expo/vector-icons";
 import { Context } from "../context/todoContext";
-import FeaturedProjects from "../components/FeaturedProjects";
-import { color } from "react-native-reanimated";
 
 const AddTask = ({ navigation, route }) => {
   const { state, addTask } = useContext(Context);
-
+  const [featured,setFeatured] = useState(false)
   const { colors } = useTheme();
   const [completed, setCompleted] = useState(false);
   const [desc, setDesc] = useState("");
@@ -173,6 +174,17 @@ const AddTask = ({ navigation, route }) => {
           </View>
         </TouchableRipple>
 
+
+        <View style={{flexDirection:'row', alignContent:'center'}}>
+          <Title>Featured Task</Title>
+          <Checkbox
+          style={{marginBottom:20}}
+          status={featured? 'checked': 'unchecked'}
+          onPress={()=> setFeatured(!featured)}
+          />
+        </View>
+
+
         <Button color={colors.purple} onPress={showDatepicker}>
           Show date picker!
         </Button>
@@ -190,11 +202,12 @@ const AddTask = ({ navigation, route }) => {
           />
         )}
 
+
         <Spacer />
         <Button
           onPress={() => {
             if (desc.length > 2) {
-              addTask(desc, formattedDate, completed, category);
+              addTask(desc, formattedDate, completed, category, featured);
               navigation.pop();
             }
           }}
