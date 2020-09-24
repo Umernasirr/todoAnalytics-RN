@@ -10,39 +10,12 @@ const todoReducer = (state, action) => {
       let newtasks = [...state.tasks, action.payload];
 
       saveLocalTasks(newtasks);
+      saveLocalTotalTasks();
+
       return { ...state, tasks: newtasks };
 
     case "local_total_tasks":
-      console.log("is this being called");
-      console.log(state);
-
-      const newTotal = state.totalTasks.map((totalTask) => {
-        state.tasks.map((task) => {
-          if (task.category === totalTask.category) {
-            const completed = task.completed;
-
-            totalTask.total += 1;
-            if (completed) {
-              totalTask.completed += 1;
-            } else {
-              totalTask.pending += 1;
-            }
-
-            const taskDateBucket = getDateBucket(task.date);
-
-            if (taskDateBucket == 1) totalTask.oneToTen += 1;
-            if (taskDateBucket == 2) totalTask.elevenToTwenty += 1;
-            if (taskDateBucket == 3) totalTask.twentyOneOnwards += 1;
-
-            return totalTask;
-          }
-          return totalTask;
-        });
-
-        return { ...state, totalTasks: newTotal };
-      });
-
-      return { ...state };
+      return { ...state, totalTasks: action.payload };
 
     case "add_total_tasks":
       let newTotalTasks = state.totalTasks.map((totalTask) => {
@@ -100,7 +73,7 @@ const todoReducer = (state, action) => {
       });
 
       saveLocalTasks(tasks);
-
+      saveLocalTotalTasks();
       return { ...state, tasks };
 
     case "set_date":
@@ -113,6 +86,37 @@ const todoReducer = (state, action) => {
 
 const saveLocalTasks = async (tasks) => {
   await AsyncStorage.setItem("tasks", JSON.stringify(tasks));
+};
+
+const saveLocalTotalTasks = async (totalTasks, tasks) => {
+  console.log("hello");
+  // if (totalTasks) {
+  //   const newTotal = totalTasks.map((totalTask) => {
+  //     tasks.map((task) => {
+  //       if (task.category === totalTask.category) {
+  //         const completed = task.completed;
+
+  //         totalTask.total += 1;
+  //         if (completed) {
+  //           totalTask.completed += 1;
+  //         } else {
+  //           totalTask.pending += 1;
+  //         }
+
+  //         const taskDateBucket = getDateBucket(task.date);
+
+  //         if (taskDateBucket == 1) totalTask.oneToTen += 1;
+  //         if (taskDateBucket == 2) totalTask.elevenToTwenty += 1;
+  //         if (taskDateBucket == 3) totalTask.twentyOneOnwards += 1;
+
+  //         return totalTask;
+  //       }
+  //       return totalTask;
+  //     });
+  //   });
+  // }
+  // await AsyncStorage.setItem("totalTasks", JSON.stringify(newTotal));
+  console.log("Total Tasks Saved");
 };
 
 const getDateBucket = (date) => {
@@ -134,8 +138,13 @@ const getSavedTasks = (dispatch) => async () => {
   }
 };
 
-const getTotalTasks = (dispatch) => async () => {
-  dispatch({ type: "local_total_tasks" });
+const getSavedTotalTasks = (dispatch) => async () => {
+  let localTotalTasks = await AsyncStorage.getItem("totalTasks");
+
+  if (localTotalTasks) {
+    let totalTasks = JSON.parse(await AsyncStorage.getItem("totalTasks"));
+    dispatch({ type: "local_total_tasks", payload: totalTasks });
+  }
 };
 
 const addTask = (dispatch) => async (
@@ -146,14 +155,13 @@ const addTask = (dispatch) => async (
   featured
 ) => {
   category = category.toLowerCase();
-  console.log(desc, date, completed, category);
   const task = {
     id: Math.round(Math.random() * 10000),
     desc,
     date,
     completed,
     category,
-    // featured
+    featured,
   };
 
   dispatch({ type: "add_task", payload: task });
@@ -184,7 +192,8 @@ export const { Context, Provider } = createDataContext(
     setCurrentDate,
     addTask,
     deleteTask,
-    getTotalTasks,
+    getSavedTotalTasks,
+    saveLocalTotalTasks,
   },
   {
     tasks: [],

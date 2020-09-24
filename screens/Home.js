@@ -23,7 +23,7 @@ const Home = () => {
     state,
     state: { totalTasks, tasks },
     getSavedTasks,
-    getTotalTasks,
+    getSavedTotalTasks,
     resetTotalTasks,
   } = useContext(Context);
 
@@ -51,13 +51,12 @@ const Home = () => {
 
   useEffect(() => {
     getSavedTasks();
-    getTotalTasks();
+    getSavedTotalTasks(tasks, totalTasks);
   }, []);
 
   useEffect(() => {
-    console.log(state.totalTasks);
+    console.log(state);
     resetCounts();
-
     const percentages = [];
 
     totalTasks.filter((totalTask) => {
@@ -100,20 +99,26 @@ const Home = () => {
 
   const screenWidth = Dimensions.get("window").width;
   const screenHeight = Dimensions.get("window").height;
+
+  const labels = totalTasks.map(
+    (totalTask) =>
+      totalTask.category.charAt(0).toUpperCase() + totalTask.category.slice(1)
+  );
+
   const data = {
-    labels: ["Important", "Custom", "Casual"],
+    labels: labels,
 
     data: percentageCompleted,
   };
 
+  const { colors } = useTheme();
+
   const chartConfig = {
-    backgroundGradientFrom: "#141414",
+    backgroundGradientFrom: colors.purple,
+    backgroundGradientTo: colors.primary,
 
-    backgroundGradientFromOpacity: 0.7,
-
-    backgroundGradientTo: "#08130D",
-
-    backgroundGradientToOpacity: 0.3,
+    backgroundGradientFromOpacity: 0.2,
+    backgroundGradientToOpacity: 0.1,
 
     color: (opacity = 255) => {
       let r = 0;
@@ -135,6 +140,7 @@ const Home = () => {
     },
 
     labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+    labelFont: () => `12`,
     strokeWidth: 2,
     barPercentage: 0.5,
 
@@ -152,8 +158,6 @@ const Home = () => {
   ];
   let date = new Date().getDate();
   let day = DAYS[new Date().getDay()];
-
-  const { colors } = useTheme();
 
   const RenderCategory = ({ name, catid, percentage }) => {
     let color = null;
@@ -236,16 +240,18 @@ const Home = () => {
 
       <View
         style={{
-          backgroundColor: colors.backdrop,
+          backgroundColor: colors.background,
           flex: 1,
           marginRight: 20,
         }}
       >
         {/* Graph */}
-        <Animatable.View>
+        <Animatable.View
+          style={{ marginRight: 20, borderRadius: 20, marginBottom: 15 }}
+        >
           <ProgressChart
             data={data}
-            width={screenWidth - 20}
+            width={screenWidth}
             height={200}
             strokeWidth={16}
             radius={30}

@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect } from "react";
 import { StyleSheet, Text, View, Picker } from "react-native";
-
+import { Checkbox } from "react-native-paper";
 import {
   useTheme,
   Title,
@@ -18,14 +18,14 @@ import BigSpacer from "../components/BigSpacer";
 import Spacer from "../components/Spacer";
 import { FontAwesome } from "@expo/vector-icons";
 import { Context } from "../context/todoContext";
-import FeaturedProjects from "../components/FeaturedProjects";
-import { color } from "react-native-reanimated";
 
 const AddTask = ({ navigation, route }) => {
-  const { state, addTask } = useContext(Context);
+  const { addTask } = useContext(Context);
 
   const { colors } = useTheme();
   const [completed, setCompleted] = useState(false);
+  const [featured, setFeatured] = useState(false);
+
   const [desc, setDesc] = useState("");
   const [date, setDate] = useState(new Date(1598051730000));
   const [formattedDate, setFormattedDate] = useState(null);
@@ -150,9 +150,11 @@ const AddTask = ({ navigation, route }) => {
             }}
             onValueChange={(itemValue, itemIndex) => setCategory(itemValue)}
           >
-            <Picker.Item label="casual" value="casual" />
-            <Picker.Item label="important" valus="important" />
-            <Picker.Item label="random" value="random" />
+            <Picker.Item label="Casual" value="casual" />
+
+            <Picker.Item label="Important" value="important" />
+
+            <Picker.Item label="Custom" value="custom" />
           </Picker>
         </View>
 
@@ -164,7 +166,7 @@ const AddTask = ({ navigation, route }) => {
               style={{ marginVertical: 10, marginRight: 10 }}
               name="date"
               size={24}
-              color="white"
+              color={colors.onSurface}
             />
             <Text style={{ color: colors.onSurface }}>
               {date.toString().substring(0, 3)} {", "}
@@ -173,6 +175,27 @@ const AddTask = ({ navigation, route }) => {
           </View>
         </TouchableRipple>
 
+        <View style={{ flexDirection: "row", alignItems: "center" }}>
+          <AntDesign
+            style={{
+              marginVertical: 10,
+              marginRight: 10,
+            }}
+            name="star"
+            size={24}
+            color={colors.onSurface}
+          />
+          <Text style={{ color: colors.onSurface }}>Featured Task?</Text>
+
+          <Checkbox
+            color={colors.purple}
+            status={featured ? "checked" : "unchecked"}
+            onPress={() => {
+              setFeatured(!featured);
+            }}
+          />
+        </View>
+        <Spacer />
         <Button color={colors.purple} onPress={showDatepicker}>
           Show date picker!
         </Button>
