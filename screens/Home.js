@@ -16,15 +16,16 @@ import { Dimensions } from "react-native";
 
 import { LineChart, ProgressChart } from "react-native-chart-kit";
 
-const Home = () => {
+const Home = ({ navigation }) => {
   const AnimationRef = useRef(null);
 
   const {
     state,
-    state: { totalTasks, tasks },
+    state: { totalTasks, tasks, featuredTasks },
     getSavedTasks,
     getSavedTotalTasks,
-    resetTotalTasks,
+    getFeaturedTasks,
+    getTotalCurrent,
   } = useContext(Context);
 
   const [query, setQuery] = useState("all");
@@ -50,20 +51,33 @@ const Home = () => {
   };
 
   useEffect(() => {
+    const unsubscribe = navigation.addListener("focus", () => {
+      getSavedTasks();
+      getFeaturedTasks();
+      getTotalCurrent();
+
+      getSavedTotalTasks();
+    });
+
     getSavedTasks();
-    getSavedTotalTasks(tasks, totalTasks);
+    getFeaturedTasks();
+    getTotalCurrent();
+
+    getSavedTotalTasks();
+
+    return unsubscribe;
   }, []);
 
   useEffect(() => {
-    console.log(state);
+    console.log(totalTasks);
     resetCounts();
     const percentages = [];
 
     totalTasks.filter((totalTask) => {
-      if (totalTask.completed === 0 || totalTask.total === 0) {
+      if (totalTask.completed === 0 || totalTask.totalCurrent === 0) {
         percentages.push(0);
       } else {
-        percentages.push(totalTask.completed / totalTask.total);
+        percentages.push(totalTask.completed / totalTask.totalCurrent);
       }
     });
 
@@ -229,13 +243,18 @@ const Home = () => {
       </View>
 
       {/* Featured Projects */}
-      <Spacer>
-        <FeaturedProjects />
-      </Spacer>
+
+      {featuredTasks.length > 0 ? (
+        <Spacer>
+          <FeaturedProjects />
+        </Spacer>
+      ) : null}
 
       {/* Visualization Section */}
       <Spacer>
-        <Title style={{ marginBottom: 10 }}>Completed Tasks</Title>
+        <Title style={{ color: colors.onSurface, marginBottom: 10 }}>
+          Completed Tasks
+        </Title>
       </Spacer>
 
       <View
@@ -262,7 +281,7 @@ const Home = () => {
       </View>
 
       <Spacer>
-        <Title>Monthly Tasks</Title>
+        <Title style={{ color: colors.onSurface }}>Monthly Tasks</Title>
         <View style={{ flexDirection: "row", justifyContent: "center" }}>
           <Button color={colors.onSurface} onPress={() => changeQuery("all")}>
             All

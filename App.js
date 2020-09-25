@@ -1,17 +1,19 @@
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
-import { DarkTheme, DefaultTheme, Provider as PaperProvider } from "react-native-paper";
+import {
+  DarkTheme,
+  DefaultTheme,
+  Provider as PaperProvider,
+} from "react-native-paper";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-
+import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
 import { Provider } from "./context/todoContext";
-
-
+import { Entypo } from "@expo/vector-icons";
 import Home from "./screens/Home";
 import CheckList from "./screens/CheckList";
 import AddTask from "./screens/AddTask";
-
+import { FontAwesome5 } from "@expo/vector-icons";
 const theme = {
   ...DarkTheme,
   colors: {
@@ -25,11 +27,9 @@ const theme = {
   roundness: 20,
 };
 
-
-
 function App() {
   const TaskStack = createStackNavigator();
-  const BottomTab = createBottomTabNavigator();
+  const BottomTab = createMaterialBottomTabNavigator();
 
   const TaskStackNav = () => (
     <TaskStack.Navigator
@@ -43,9 +43,37 @@ function App() {
   );
 
   const BottomTabNav = () => (
-    <BottomTab.Navigator>
-      <BottomTab.Screen name="Home" component={Home} />
-      <BottomTab.Screen name="TaskStackNav" component={TaskStackNav} />
+    <BottomTab.Navigator
+      backBehavior="none"
+      shifting
+      initialRouteName="Home"
+      activeColor="#f0edf6"
+      inactiveColor="#8B8C8D"
+      barStyle={{ backgroundColor: "#C822B0" }}
+    >
+      <BottomTab.Screen
+        name="Home"
+        component={Home}
+        options={{
+          tabBarLabel: "Home",
+          tabBarIcon: ({ color }) => (
+            <Entypo name="home" size={24} color={color} />
+          ),
+          tabBarColor: "#6441A5",
+        }}
+      />
+      <BottomTab.Screen
+        name="TaskStackNav"
+        component={TaskStackNav}
+        options={{
+          tabBarColor: "#BE1474",
+
+          tabBarLabel: "Tasks",
+          tabBarIcon: ({ color }) => (
+            <FontAwesome5 name="tasks" size={24} color={color} />
+          ),
+        }}
+      />
     </BottomTab.Navigator>
   );
 

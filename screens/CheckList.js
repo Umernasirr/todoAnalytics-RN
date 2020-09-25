@@ -18,7 +18,7 @@ import Tasks from "../components/Tasks";
 
 import { Context } from "../context/todoContext";
 const CheckList = ({ navigation }) => {
-  const { getSavedTasks } = useContext(Context);
+  const { getSavedTasks, getFeaturedTasks } = useContext(Context);
   const DAYS = [
     "Monday",
     "Tuesday",
@@ -38,8 +38,6 @@ const CheckList = ({ navigation }) => {
   const daysInMonth = new Date(now.getMonth(), now.getFullYear(), 0).getDate();
 
   useEffect(() => {
-    getSavedTasks();
-
     let dt = [];
     for (let i = -1; i <= 7; i++) {
       dt.push({

@@ -1,32 +1,37 @@
-import React from "react";
-import {
-  StyleSheet,
-  Text,
-  View,
-  Dimensions,
-  Image,
-  FlatList,
-} from "react-native";
+import React, { useContext, useEffect, useState } from "react";
+import { StyleSheet, View, Dimensions } from "react-native";
 
 import Carousel from "react-native-snap-carousel";
 
-import { useTheme, Title, Button } from "react-native-paper";
-
+import { useTheme, Title } from "react-native-paper";
+import { Context } from "../context/todoContext";
+import * as Animatable from "react-native-animatable";
 import Project from "../components/Project";
 const FeaturedProjects = () => {
+  const {
+    state: { featuredTasks },
+    setTaskStatus,
+  } = useContext(Context);
+
+  const [featured, setFeatured] = useState([]);
+  useEffect(() => {
+    setFeatured(featuredTasks);
+  }, [featuredTasks]);
+
   const screenWidth = Dimensions.get("window").width;
-  const screenHeight = Dimensions.get("window").height;
 
   const { colors } = useTheme();
 
   return (
-    <View>
+    <View animation="fadeIn">
       <Title style={{ color: colors.onSurface }}>Featured Projects</Title>
 
       <View>
         <Carousel
-          data={[1, 1, 1, 1]}
-          renderItem={({ item, index }) => <Project />}
+          data={featured}
+          renderItem={({ item }) => (
+            <Project item={item} setTaskStatus={setTaskStatus} />
+          )}
           sliderWidth={screenWidth - 40}
           itemWidth={screenWidth - 50}
           layout="stack"

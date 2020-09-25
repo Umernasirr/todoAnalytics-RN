@@ -1,23 +1,36 @@
-import React from "react";
+import React, { useState } from "react";
 import { StyleSheet, Text, View, Dimensions, Image } from "react-native";
-import { useTheme, Title, Button } from "react-native-paper";
+import { useTheme, Title, Button, Checkbox } from "react-native-paper";
 import Spacer from "../components/Spacer";
 
-const Project = () => {
+const Project = ({ item }) => {
   const { colors } = useTheme();
+  let { id, category, completed, date, desc } = item;
 
-  return (
-    <View>
-      <View
-        style={{
-          flex: 1,
-          backgroundColor: colors.backdrop,
-          borderRadius: 20,
-          padding: 30,
-          margin: 30,
-        }}
-      >
-        <Spacer>
+  const [checkedComplete, setCheckedCompleted] = useState(completed);
+  const DAYS = [
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+    "Sunday",
+  ];
+
+  category = category.toUpperCase();
+  if (item) {
+    return (
+      <View>
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: colors.backdrop,
+            borderRadius: 20,
+            padding: 30,
+            margin: 30,
+          }}
+        >
           <Image
             style={styles.catImage}
             source={require("../assets/cat1.png")}
@@ -25,7 +38,7 @@ const Project = () => {
 
           <View>
             <Title style={{ marginTop: 10, color: colors.disabled }}>
-              Meetings
+              {category}
             </Title>
             <Text
               style={{
@@ -35,7 +48,7 @@ const Project = () => {
               }}
               numberOfLines={3}
             >
-              Meet a friend on Friday for Coffee
+              {desc}
             </Text>
           </View>
 
@@ -49,7 +62,7 @@ const Project = () => {
                 marginRight: 5,
               }}
             >
-              Friday
+              {date}, {new Date().toUTCString().slice(8, 17)}
             </Text>
             <Text
               style={{
@@ -59,13 +72,21 @@ const Project = () => {
                 padding: 10,
               }}
             >
-              11:30 AM
+              {DAYS[date % 7]}
             </Text>
           </View>
-        </Spacer>
+
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          ></View>
+        </View>
       </View>
-    </View>
-  );
+    );
+  }
 };
 
 export default Project;

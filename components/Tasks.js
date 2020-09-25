@@ -12,15 +12,18 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 
 import { Context } from "../context/todoContext";
-import Spacer from "./Spacer";
-import { ScrollView } from "react-native-gesture-handler";
+import { AntDesign } from "@expo/vector-icons";
 import * as Animatable from "react-native-animatable";
 const Tasks = () => {
   let taskRef = useRef();
   const navigation = useNavigation();
-  const { state, setTaskStatus, deleteTask, getSavedTasks } = useContext(
-    Context
-  );
+  const {
+    state,
+    setTaskStatus,
+    deleteTask,
+    getSavedTasks,
+    setFeatured,
+  } = useContext(Context);
 
   let tasks = state.tasks;
   const currentDate = state.currentDate;
@@ -29,10 +32,8 @@ const Tasks = () => {
 
   const { colors } = useTheme();
 
-  const RenderItem = ({ id, desc, completed }) => {
-    useEffect(() => {
-      taskRef.current.fadeIn();
-    }, []);
+  const RenderItem = ({ id, desc, completed, featured }) => {
+    useEffect(() => {}, []);
 
     return (
       <View
@@ -48,11 +49,27 @@ const Tasks = () => {
           marginTop: 10,
         }}
       >
+        <TouchableOpacity
+          onPress={() => {
+            setFeatured(id);
+          }}
+          style={{
+            position: "absolute",
+            left: 20,
+          }}
+        >
+          {featured ? (
+            <AntDesign name="star" size={24} color={colors.onSurface} />
+          ) : (
+            <AntDesign name="staro" size={24} color={colors.onSurface} />
+          )}
+        </TouchableOpacity>
         <Text
           style={{
             fontSize: 12,
             color: colors.onSurface,
-            marginRight: 60,
+            marginRight: 50,
+            marginLeft: 20,
             textDecorationLine: completed ? "line-through" : "none",
           }}
           numberOfLines={1}
@@ -62,7 +79,7 @@ const Tasks = () => {
 
         <TouchableOpacity
           onPress={() => deleteTask(id)}
-          style={{ position: "absolute", right: 60 }}
+          style={{ position: "absolute", right: 50 }}
         >
           <MaterialCommunityIcons
             name="delete-outline"
@@ -112,6 +129,7 @@ const Tasks = () => {
               id={item.id}
               desc={item.desc}
               completed={item.completed}
+              featured={item.featured}
             />
           )}
           keyExtractor={(item) => item.id.toString()}
