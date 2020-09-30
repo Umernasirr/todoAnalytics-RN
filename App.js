@@ -46,22 +46,11 @@ function App() {
     <BottomTab.Navigator
       backBehavior="none"
       shifting
-      initialRouteName="Home"
+      initialRouteName="TaskStackNav"
       activeColor="#f0edf6"
       inactiveColor="#8B8C8D"
       barStyle={{ backgroundColor: "#C822B0" }}
     >
-      <BottomTab.Screen
-        name="Home"
-        component={Home}
-        options={{
-          tabBarLabel: "Home",
-          tabBarIcon: ({ color }) => (
-            <Entypo name="home" size={24} color={color} />
-          ),
-          tabBarColor: "#6441A5",
-        }}
-      />
       <BottomTab.Screen
         name="TaskStackNav"
         component={TaskStackNav}
@@ -72,6 +61,18 @@ function App() {
           tabBarIcon: ({ color }) => (
             <FontAwesome5 name="tasks" size={24} color={color} />
           ),
+        }}
+      />
+
+      <BottomTab.Screen
+        name="Home"
+        component={Home}
+        options={{
+          tabBarLabel: "Home",
+          tabBarIcon: ({ color }) => (
+            <Entypo name="home" size={24} color={color} />
+          ),
+          tabBarColor: "#6441A5",
         }}
       />
     </BottomTab.Navigator>

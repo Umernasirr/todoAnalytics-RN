@@ -13,9 +13,10 @@ import Spacer from "../components/Spacer";
 import FeaturedProjects from "../components/FeaturedProjects";
 import { Context } from "../context/todoContext";
 import { Dimensions } from "react-native";
-
+import DataViewer from "../components/DataViewer";
 import { LineChart, ProgressChart } from "react-native-chart-kit";
-
+import { Ionicons } from "@expo/vector-icons";
+import { Feather } from "@expo/vector-icons";
 const Home = ({ navigation }) => {
   const AnimationRef = useRef(null);
 
@@ -23,18 +24,20 @@ const Home = ({ navigation }) => {
     state,
     state: { totalTasks, tasks, featuredTasks },
     getSavedTasks,
-    getSavedTotalTasks,
+    getLocalTotalTasks,
+    resetAsync,
     getFeaturedTasks,
     getTotalCurrent,
   } = useContext(Context);
 
   const [query, setQuery] = useState("all");
-  const [percentageCompleted, setPercentageCompleted] = useState([0, 0, 0, 0]);
 
   const [totalOneToTen, setTotalOneToTen] = useState(0);
   const [totalElevenToTwenty, setTotalElevenToTwenty] = useState(0);
 
   const [totalTwentyOneOnwards, setTotalTwentyOneOnwards] = useState(0);
+
+  const [percentages, setPercentages] = useState([0, 0, 0]);
 
   const resetCounts = () => {
     setTotalOneToTen(0);
@@ -44,7 +47,6 @@ const Home = ({ navigation }) => {
 
   const changeQuery = (qr) => {
     if (query !== qr) {
-      // resetCounts();
       setQuery(qr);
       AnimationRef.current?.fadeInUp();
     }
@@ -53,35 +55,24 @@ const Home = ({ navigation }) => {
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", () => {
       getSavedTasks();
-      getFeaturedTasks();
-      getTotalCurrent();
 
-      getSavedTotalTasks();
+      getFeaturedTasks();
+
+      getLocalTotalTasks();
+
+      calculateCurrentTotals();
     });
 
     getSavedTasks();
     getFeaturedTasks();
-    getTotalCurrent();
 
-    getSavedTotalTasks();
-
+    getLocalTotalTasks();
+    calculateCurrentTotals();
     return unsubscribe;
   }, []);
 
   useEffect(() => {
-    console.log(totalTasks);
     resetCounts();
-    const percentages = [];
-
-    totalTasks.filter((totalTask) => {
-      if (totalTask.completed === 0 || totalTask.totalCurrent === 0) {
-        percentages.push(0);
-      } else {
-        percentages.push(totalTask.completed / totalTask.totalCurrent);
-      }
-    });
-
-    setPercentageCompleted(percentages);
 
     // Totals
 
@@ -109,20 +100,56 @@ const Home = ({ navigation }) => {
     setTotalOneToTen(testA);
     setTotalElevenToTwenty(testB);
     setTotalTwentyOneOnwards(testC);
-  }, [tasks, totalTasks, query]);
+  }, [tasks, query]);
+
+  const calculateCurrentTotals = () => {
+    let totalCat1 = 0;
+    let totalCat2 = 0;
+    let totalCat3 = 0;
+    let total = 0;
+
+    setPercentages(0, 0, 0);
+
+    state.tasks.forEach((task) => {
+      if (task.category === "casual") {
+        totalCat1 = totalCat1 + 1;
+      } else if (task.category === "important") {
+        totalCat2 = totalCat2 + 1;
+      } else if (task.category === "custom") {
+        totalCat3 = totalCat3 + 1;
+      }
+    });
+
+    console.log(totalCat1);
+    console.log(totalCat2);
+    console.log(totalCat3);
+
+    console.log("----");
+
+    console.log(totalTasks[0].completed);
+    console.log(totalTasks[1].completed);
+    console.log(totalTasks[2].completed);
+
+    let p1 = 0;
+    let p2 = 0;
+    let p3 = 0;
+
+    if (totalTasks[0].completed != 0) p1 = totalTasks[0].completed / totalCat1;
+
+    if (totalTasks[1].completed != 0) p2 = totalTasks[1].completed / totalCat2;
+
+    if (totalTasks[2].completed != 0) p3 = totalTasks[2].completed / totalCat3;
+
+    setPercentages([p1, p2, p3]);
+  };
 
   const screenWidth = Dimensions.get("window").width;
   const screenHeight = Dimensions.get("window").height;
 
-  const labels = totalTasks.map(
-    (totalTask) =>
-      totalTask.category.charAt(0).toUpperCase() + totalTask.category.slice(1)
-  );
-
   const data = {
-    labels: labels,
+    labels: ["Casual", "Important", "Custom"],
 
-    data: percentageCompleted,
+    data: percentages,
   };
 
   const { colors } = useTheme();
@@ -226,19 +253,19 @@ const Home = ({ navigation }) => {
           justifyContent: "center",
         }}
       >
-        <TouchableOpacity>
-          <Image style={styles.menu} source={require("../assets/menu.png")} />
+        <TouchableOpacity style={{ marginRight: 50 }} onPress={() => {}}>
+          <Feather name="settings" size={32} color="white" />
         </TouchableOpacity>
         <Title
           style={{ color: colors.onSurface, fontSize: 30, marginBottom: 15 }}
         >
           {day}, {date}
         </Title>
-        <TouchableOpacity>
-          <Image
-            style={styles.calender}
-            source={require("../assets/calender.png")}
-          />
+        <TouchableOpacity
+          style={styles.addTask}
+          onPress={() => navigation.navigate("AddTask")}
+        >
+          <Ionicons name="md-add" size={30} color="white" />
         </TouchableOpacity>
       </View>
 
@@ -251,11 +278,6 @@ const Home = ({ navigation }) => {
       ) : null}
 
       {/* Visualization Section */}
-      <Spacer>
-        <Title style={{ color: colors.onSurface, marginBottom: 10 }}>
-          Completed Tasks
-        </Title>
-      </Spacer>
 
       <View
         style={{
@@ -264,7 +286,6 @@ const Home = ({ navigation }) => {
           marginRight: 20,
         }}
       >
-        {/* Graph */}
         <Animatable.View
           style={{ marginRight: 20, borderRadius: 20, marginBottom: 15 }}
         >
@@ -279,9 +300,12 @@ const Home = ({ navigation }) => {
           />
         </Animatable.View>
       </View>
+      <Spacer>
+        <DataViewer />
+      </Spacer>
 
       <Spacer>
-        <Title style={{ color: colors.onSurface }}>Monthly Tasks</Title>
+        <Title style={{ color: colors.onSurface }}>Total Tasks</Title>
         <View style={{ flexDirection: "row", justifyContent: "center" }}>
           <Button color={colors.onSurface} onPress={() => changeQuery("all")}>
             All
@@ -368,5 +392,19 @@ const styles = StyleSheet.create({
     width: 15,
     marginRight: 15,
     borderRadius: 100,
+  },
+
+  calender: {
+    width: 40,
+    height: 40,
+    marginRight: 50,
+  },
+
+  addTask: {
+    borderColor: "#fffFff",
+    borderWidth: 1,
+    paddingHorizontal: 5,
+    marginLeft: 45,
+    alignSelf: "center",
   },
 });

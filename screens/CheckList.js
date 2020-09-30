@@ -18,7 +18,7 @@ import Tasks from "../components/Tasks";
 
 import { Context } from "../context/todoContext";
 const CheckList = ({ navigation }) => {
-  const { getSavedTasks, getFeaturedTasks } = useContext(Context);
+  const { getSavedTasks, getFeaturedTasks, state } = useContext(Context);
   const DAYS = [
     "Monday",
     "Tuesday",
@@ -49,14 +49,22 @@ const CheckList = ({ navigation }) => {
   }, []);
 
   useEffect(() => {
+    console.log(state);
     let dt = [];
 
     if (isWeekly) {
       for (let i = -1; i <= 7; i++) {
-        dt.push({
-          date: i + date,
-          day: DAYS[(i + date) % 7],
-        });
+        if (!i - 1 + date > daysInMonth) {
+          dt.push({
+            date: i + date,
+            day: DAYS[(i + date) % 7],
+          });
+        } else {
+          dt.push({
+            date: i - 7 + date,
+            day: DAYS[(i - 7 + date) % 7],
+          });
+        }
       }
     } else {
       for (let i = 1; i <= daysInMonth; i++) {

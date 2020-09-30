@@ -12,8 +12,7 @@ const todoReducer = (state, action) => {
       return { ...state, tasks: newtasks };
 
     // work in progress
-    case "save_local_tasks":
-      saveLocalTotal(action.payload);
+    case "get_local_tasks":
       return { ...state, totalTasks: action.payload };
 
     case "set_featured":
@@ -49,6 +48,12 @@ const todoReducer = (state, action) => {
           const oneToTen = totalTask.oneToTen + 1;
           const elevenToTwenty = totalTask.elevenToTwenty + 1;
           const twentyOneOnwards = totalTask.twentyOneOnwards + 1;
+          let totalCurrent = 0;
+          if (!totalTask.totalCurrent) {
+            totalCurrent = 1;
+          } else {
+            totalCurrent = totalTask.totalCurrent + 1;
+          }
 
           const dateBucket = getDateBucket(action.payload.date);
 
@@ -58,6 +63,7 @@ const todoReducer = (state, action) => {
 
           totalTask.total = total;
           totalTask.pending = pending;
+          totalTask.totalCurrent = totalCurrent;
 
           return totalTask;
         }
@@ -80,11 +86,12 @@ const todoReducer = (state, action) => {
           state.totalTasks.forEach((totalTask) => {
             if (task.category === totalTask.category) {
               if (task.completed) {
-                totalTask.pending -= 1;
+                if (totalTask.pending > 0) totalTask.pending -= 1;
+
                 totalTask.completed += 1;
               } else {
                 totalTask.pending += 1;
-                totalTask.completed -= 1;
+                if (totalTask.completed > 0) totalTask.completed -= 1;
               }
             }
           });
@@ -93,7 +100,9 @@ const todoReducer = (state, action) => {
           return task;
         }
       });
+
       saveLocalTasks(tasks);
+      saveLocalTotal(state.totalTasks);
       return { ...state, tasks };
 
     case "set_date":
@@ -101,17 +110,17 @@ const todoReducer = (state, action) => {
 
     case "set_total_current":
       newTotalTasks = state.totalTasks.map((totalTask) => {
-        state.tasks.map((task) => {
-          console.log("helooooo");
-
-          console.log(totalTask.category == task.category);
-          if (totalTask.category == task.category) {
-            console.log("helooooo");
+        state.tasks.forEach((task) => {
+          totalTask.totalCurrent = 0;
+          if (totalTask.category === task.category) {
             totalTask.totalCurrent += 1;
+          } else {
           }
         });
+
         return totalTask;
       });
+
       return { ...state, totalTasks: newTotalTasks };
 
     default:
@@ -124,7 +133,9 @@ const saveLocalTasks = async (tasks) => {
 };
 
 const saveLocalTotal = async (totals) => {
+  console.log("saved local");
   await AsyncStorage.setItem("totalTasks", JSON.stringify(totals));
+  console.log(totals);
 };
 
 const getDateBucket = (date) => {
@@ -146,21 +157,17 @@ const getSavedTasks = (dispatch) => async () => {
   }
 };
 
-const saveLocalTotalTasks = (dispatch) => async (totalTasks) => {
-  dispatch({ type: "save_local_tasks", payload: totalTasks });
-};
-
-const getSavedTotalTasks = (dispatch) => async () => {
+const getLocalTotalTasks = (dispatch) => async () => {
   let localTotalTasks = await AsyncStorage.getItem("totalTasks");
 
   if (localTotalTasks) {
     let totalTasks = JSON.parse(await AsyncStorage.getItem("totalTasks"));
-    dispatch({ type: "save_local_tasks", payload: totalTasks });
+    dispatch({ type: "get_local_tasks", payload: totalTasks });
   }
 };
 
 const getTotalCurrent = (dispatch) => async () => {
-  dispatch({ type: "set_total_current" });
+  // dispatch({ type: "set_total_current" });
 };
 
 const getFeaturedTasks = (dispatch) => async () => {
@@ -194,6 +201,7 @@ const addTask = (dispatch) => async (
 
 const resetAsync = (dispatch) => async () => {
   await AsyncStorage.removeItem("tasks");
+  await AsyncStorage.removeItem("totalTasks");
 };
 
 const deleteTask = (dispatch) => async (id) => {
@@ -216,8 +224,7 @@ export const { Context, Provider } = createDataContext(
     setCurrentDate,
     addTask,
     deleteTask,
-    getSavedTotalTasks,
-    saveLocalTotalTasks,
+    getLocalTotalTasks,
     resetAsync,
     setFeatured,
     getTotalCurrent,
@@ -228,7 +235,7 @@ export const { Context, Provider } = createDataContext(
     currentDate: new Date().getDate(),
     totalTasks: [
       {
-        category: "custom",
+        category: "casual",
         total: 0,
         completed: 0,
         pending: 0,
@@ -248,7 +255,7 @@ export const { Context, Provider } = createDataContext(
         totalCurrent: 0,
       },
       {
-        category: "casual",
+        category: "custom",
         total: 0,
         completed: 0,
         pending: 0,
