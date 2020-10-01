@@ -98,7 +98,7 @@ const DataViewer = () => {
 
   return (
     <View>
-      <Title style={{ color: colors.onSurface }}>Your Progress </Title>
+      <Title style={{ color: colors.text }}>Your Progress </Title>
       <Spacer />
       <View style={{ alignItems: "center" }}>
         <View style={{ flexDirection: "row" }}>

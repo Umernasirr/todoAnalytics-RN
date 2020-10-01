@@ -44,7 +44,7 @@ const Project = ({ item }) => {
               style={{
                 marginVertical: 5,
                 marginVertical: 10,
-                color: colors.onSurface,
+                color: colors.text,
               }}
               numberOfLines={3}
             >
