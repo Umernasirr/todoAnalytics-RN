@@ -23,7 +23,7 @@ const FeaturedProjects = () => {
   const { colors } = useTheme();
 
   return (
-    <View animation="fadeIn">
+    <Animatable.View animation="slideInDown">
       <Title style={{ color: colors.onSurface }}>Featured Projects</Title>
 
       <View>
@@ -41,7 +41,7 @@ const FeaturedProjects = () => {
 
         {/*  */}
       </View>
-    </View>
+    </Animatable.View>
   );
 };
 

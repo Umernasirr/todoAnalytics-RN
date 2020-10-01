@@ -29,53 +29,74 @@ const CheckList = ({ navigation }) => {
     "Sunday",
   ];
 
-  const now = new Date();
-
   const [isWeekly, setIsWeekly] = useState(true);
   const [dates, setDates] = useState([]);
-  let date = now.getDate();
-  let day = DAYS[now.getDay()];
+  let now = new Date();
+
+  let day = now.toString().slice(0, 3);
+  let date = now.toString().slice(8, 10);
+
   const daysInMonth = new Date(now.getMonth(), now.getFullYear(), 0).getDate();
 
   useEffect(() => {
-    let dt = [];
-    for (let i = -1; i <= 7; i++) {
-      dt.push({
-        date: i + date,
-        day: DAYS[(i + date) % 7],
+    let datess = [];
+    for (let i = 0; i < 7; i++) {
+      let date = new Date();
+      date.setDate(now.getDate() + i);
+
+      let dayy = date.toString().slice(0, 3);
+      let datee = date.toString().slice(8, 10);
+      datess.push({
+        date: parseInt(datee),
+        day: dayy,
       });
     }
-    setDates(dt);
+
+    setDates(datess);
+    console.log(dates);
   }, []);
 
   useEffect(() => {
-    console.log(state);
-    let dt = [];
-
+    getSavedTasks();
+    let datess = [];
     if (isWeekly) {
-      for (let i = -1; i <= 7; i++) {
-        if (!i - 1 + date > daysInMonth) {
-          dt.push({
-            date: i + date,
-            day: DAYS[(i + date) % 7],
-          });
-        } else {
-          dt.push({
-            date: i - 7 + date,
-            day: DAYS[(i - 7 + date) % 7],
-          });
-        }
+      let now = new Date();
+
+      day = now.toString().slice(0, 3);
+      date = now.toString().slice(8, 10);
+
+      for (let i = 0; i < 7; i++) {
+        let date = new Date();
+        date.setDate(now.getDate() + i);
+
+        let dayy = date.toString().slice(0, 3);
+        let datee = date.toString().slice(8, 10);
+        datess.push({
+          date: parseInt(datee),
+          day: dayy,
+        });
       }
     } else {
-      for (let i = 1; i <= daysInMonth; i++) {
-        dt.push({
-          date: i,
-          day: DAYS[i % 7],
+      let now = new Date();
+
+      day = now.toString().slice(0, 3);
+      date = now.toString().slice(8, 10);
+
+      for (let i = 0; i < 30; i++) {
+        let date = new Date();
+        date.setDate(now.getDate() + i);
+
+        let dayy = date.toString().slice(0, 3);
+        let datee = date.toString().slice(8, 10);
+
+        datess.push({
+          date: parseInt(datee),
+          day: dayy,
         });
       }
     }
 
-    setDates(dt);
+    setDates(datess);
   }, [isWeekly]);
 
   const { colors } = useTheme();

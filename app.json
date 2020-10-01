@@ -1,21 +1,25 @@
 {
   "expo": {
-    "name": "todoApp",
-    "slug": "todoApp",
+    "name": "TodoTasks",
+    "slug": "todo-tasks",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#000000"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+
+    "android": {
+      "package": "com.rremu.TodoTasks",
+      "versionCode": 1
+    },
+
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true
     },

@@ -133,9 +133,7 @@ const saveLocalTasks = async (tasks) => {
 };
 
 const saveLocalTotal = async (totals) => {
-  console.log("saved local");
   await AsyncStorage.setItem("totalTasks", JSON.stringify(totals));
-  console.log(totals);
 };
 
 const getDateBucket = (date) => {

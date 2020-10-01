@@ -100,6 +100,8 @@ const Home = ({ navigation }) => {
     setTotalOneToTen(testA);
     setTotalElevenToTwenty(testB);
     setTotalTwentyOneOnwards(testC);
+
+    console.log(state);
   }, [tasks, query]);
 
   const calculateCurrentTotals = () => {
@@ -119,16 +121,6 @@ const Home = ({ navigation }) => {
         totalCat3 = totalCat3 + 1;
       }
     });
-
-    console.log(totalCat1);
-    console.log(totalCat2);
-    console.log(totalCat3);
-
-    console.log("----");
-
-    console.log(totalTasks[0].completed);
-    console.log(totalTasks[1].completed);
-    console.log(totalTasks[2].completed);
 
     let p1 = 0;
     let p2 = 0;
@@ -188,17 +180,10 @@ const Home = ({ navigation }) => {
     useShadowColorFromDataset: false,
   };
 
-  const DAYS = [
-    "Monday",
-    "Tuesday",
-    "Wednesday",
-    "Thursday",
-    "Friday",
-    "Saturday",
-    "Sunday",
-  ];
-  let date = new Date().getDate();
-  let day = DAYS[new Date().getDay()];
+  let now = new Date();
+
+  let day = now.toString().slice(0, 3);
+  let date = now.toString().slice(8, 10);
 
   const RenderCategory = ({ name, catid, percentage }) => {
     let color = null;
@@ -254,7 +239,7 @@ const Home = ({ navigation }) => {
         }}
       >
         <TouchableOpacity style={{ marginRight: 50 }} onPress={() => {}}>
-          <Feather name="settings" size={32} color="white" />
+          <Feather name="settings" size={36} color="white" />
         </TouchableOpacity>
         <Title
           style={{ color: colors.onSurface, fontSize: 30, marginBottom: 15 }}
@@ -279,7 +264,7 @@ const Home = ({ navigation }) => {
 
       {/* Visualization Section */}
 
-      <View
+      {/* <View
         style={{
           backgroundColor: colors.background,
           flex: 1,
@@ -298,8 +283,9 @@ const Home = ({ navigation }) => {
             chartConfig={chartConfig}
             hideLegend={false}
           />
-        </Animatable.View>
-      </View>
+        </Animatable.View> 
+      </View> 
+      */}
       <Spacer>
         <DataViewer />
       </Spacer>
