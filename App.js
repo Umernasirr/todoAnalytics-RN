@@ -11,6 +11,8 @@ import { createMaterialBottomTabNavigator } from "@react-navigation/material-bot
 import { Provider } from "./context/todoContext";
 import { Entypo } from "@expo/vector-icons";
 import Home from "./screens/Home";
+import Settings from "./screens/Settings";
+
 import CheckList from "./screens/CheckList";
 import AddTask from "./screens/AddTask";
 import { FontAwesome5 } from "@expo/vector-icons";
@@ -30,6 +32,18 @@ const theme = {
 function App() {
   const TaskStack = createStackNavigator();
   const BottomTab = createMaterialBottomTabNavigator();
+  const HomeStack = createStackNavigator();
+
+  const HomeStackNav = () => (
+    <HomeStack.Navigator
+      screenOptions={{
+        headerShown: false,
+      }}
+    >
+      <HomeStack.Screen name="Home" component={Home} />
+      <HomeStack.Screen name="Settings" component={Settings} />
+    </HomeStack.Navigator>
+  );
 
   const TaskStackNav = () => (
     <TaskStack.Navigator
@@ -66,7 +80,7 @@ function App() {
 
       <BottomTab.Screen
         name="Home"
-        component={Home}
+        component={HomeStackNav}
         options={{
           tabBarLabel: "Home",
           tabBarIcon: ({ color }) => (

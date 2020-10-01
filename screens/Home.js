@@ -238,7 +238,12 @@ const Home = ({ navigation }) => {
           justifyContent: "center",
         }}
       >
-        <TouchableOpacity style={{ marginRight: 50 }} onPress={() => {}}>
+        <TouchableOpacity
+          style={{ marginRight: 50 }}
+          onPress={() => {
+            navigation.navigate("Settings");
+          }}
+        >
           <Feather name="settings" size={36} color="white" />
         </TouchableOpacity>
         <Title

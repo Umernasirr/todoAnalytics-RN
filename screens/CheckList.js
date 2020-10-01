@@ -65,7 +65,7 @@ const CheckList = ({ navigation }) => {
       day = now.toString().slice(0, 3);
       date = now.toString().slice(8, 10);
 
-      for (let i = 0; i < 7; i++) {
+      for (let i = -1; i < 7; i++) {
         let date = new Date();
         date.setDate(now.getDate() + i);
 
@@ -82,7 +82,9 @@ const CheckList = ({ navigation }) => {
       day = now.toString().slice(0, 3);
       date = now.toString().slice(8, 10);
 
-      for (let i = 0; i < 30; i++) {
+      now.setDate(1);
+
+      for (let i = 0; i < daysInMonth; i++) {
         let date = new Date();
         date.setDate(now.getDate() + i);
 

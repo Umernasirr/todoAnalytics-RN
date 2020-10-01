@@ -4,6 +4,11 @@ import { AsyncStorage } from "react-native";
 
 const todoReducer = (state, action) => {
   switch (action.type) {
+    case "reset_data":
+      return action.payload;
+
+    case "set_dark_mode":
+      return { ...state, darkMode: payload };
     case "add_tasks":
       return { ...state, tasks: action.payload };
     case "add_task":
@@ -176,6 +181,10 @@ const setFeatured = (dispatch) => async (id) => {
   dispatch({ type: "set_featured", payload: id });
 };
 
+const setDarkMode = (dispatch) => async (darkMode) => {
+  dispatch({ type: "set_dark_mode", payload: darkMode });
+};
+
 const addTask = (dispatch) => async (
   desc,
   date,
@@ -200,6 +209,47 @@ const addTask = (dispatch) => async (
 const resetAsync = (dispatch) => async () => {
   await AsyncStorage.removeItem("tasks");
   await AsyncStorage.removeItem("totalTasks");
+
+  let resetState = {
+    darkMode: true,
+    tasks: [],
+    currentDate: new Date().getDate(),
+    totalTasks: [
+      {
+        category: "casual",
+        total: 0,
+        completed: 0,
+        pending: 0,
+        oneToTen: 0,
+        elevenToTwenty: 0,
+        twentyOneOnwards: 0,
+        totalCurrent: 0,
+      },
+      {
+        category: "important",
+        total: 0,
+        completed: 0,
+        pending: 0,
+        oneToTen: 0,
+        elevenToTwenty: 0,
+        twentyOneOnwards: 0,
+        totalCurrent: 0,
+      },
+      {
+        category: "custom",
+        total: 0,
+        completed: 0,
+        pending: 0,
+        oneToTen: 0,
+        elevenToTwenty: 0,
+        twentyOneOnwards: 0,
+        totalCurrent: 0,
+      },
+    ],
+    featuredTasks: [],
+  };
+
+  dispatch({ type: "reset_data", payload: resetState });
 };
 
 const deleteTask = (dispatch) => async (id) => {
@@ -227,8 +277,10 @@ export const { Context, Provider } = createDataContext(
     setFeatured,
     getTotalCurrent,
     getFeaturedTasks,
+    setDarkMode,
   },
   {
+    darkMode: true,
     tasks: [],
     currentDate: new Date().getDate(),
     totalTasks: [

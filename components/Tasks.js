@@ -139,7 +139,7 @@ const Tasks = () => {
   } else {
     return (
       <View style={{ alignItems: "center", justifyContent: "center" }}>
-        <Title style={{ color: colors.disabled }}>No Tasks found today</Title>
+        <Title style={{ color: colors.text }}>No Tasks found today</Title>
         <Button
           onPress={() => navigation.navigate("AddTask", { currentDate })}
           style={styles.button}
